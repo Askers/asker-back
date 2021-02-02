@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const askRouter = require("./routes/ask");
 const userRouter = require("./routes/ask");
 const db = require("./models");
@@ -13,6 +14,14 @@ db.sequelize
     console.log("DB SUCCESS");
   })
   .catch(console.error);
+
+// CORS ERROR solution
+app.use(
+  cors({
+    origin: "*",
+    credentials: false, // 나중에 true로 바꿔야 함
+  })
+);
 
 // Front 연결
 app.use(express.json());

@@ -23,6 +23,8 @@ router.post("/", async (req, res, next) => {
       username: req.body.username,
       password: hashedPassword,
     });
+    // res.setHeader("Access-Contol-Allow-Origin", "http://localhost:3060");
+    // 근데 그냥 미들웨어로 처리함
     res.status(201).send("ok");
   } catch (err) {
     console.error(err);

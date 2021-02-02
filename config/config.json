@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": "Qazedcs74108520",
-    "database": "asker-db",
+    "database": "asker",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
