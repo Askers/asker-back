@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       src: {
         type: DataTypes.STRING(200),
+        allowNull: true,
       },
     },
     {
