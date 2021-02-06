@@ -2,8 +2,12 @@ module.exports = (sequelize, DataTypes) => {
   const Ask = sequelize.define(
     "Ask",
     {
+      nickname: {
+        type: DataTypes.STRING(30),
+        allowNull: true,
+      },
       content: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING(1000),
         allowNull: false,
       },
     },
