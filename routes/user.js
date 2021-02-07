@@ -1,12 +1,15 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const { User } = require("../models/user");
-
+const { User, Answer } = require("../models");
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 const router = express.Router();
 
+router.get("/", (req, res) => {
+  res.send({ id: "hi" });
+});
 // POST /user
-router.post("/", async (req, res, next) => {
+router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
     // 기존 유저와 매치
     const existUser = await User.findOne({
@@ -14,6 +17,7 @@ router.post("/", async (req, res, next) => {
         email: req.body.email,
       },
     });
+    console.log(existUser);
     if (existUser) {
       return res.status(403).send("이미 사용 중인 email 입니다.");
     }
@@ -32,7 +36,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // POST /user/login
-router.post("/login", (req, res, next) => {
+router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return next(err);
@@ -45,9 +49,25 @@ router.post("/login", (req, res, next) => {
         console.error(loginErr);
         return next(loginErr);
       }
-      return res.json(user);
+      const userInfoWithoutPassword = await User.findOne({
+        where: { id: user.id },
+        // password 제외
+        attributes: { exclude: ["password"] },
+        include: [
+          {
+            model: Answer,
+          },
+        ],
+      });
+      return res.status(201).json(userInfoWithoutPassword);
     });
   })(req, res, next);
+});
+
+router.post("/logout", isLoggedIn, (req, res) => {
+  req.logout();
+  req.session.destroy();
+  res.send("logout okk");
 });
 
 module.exports = router;

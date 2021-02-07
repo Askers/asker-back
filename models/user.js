@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       // id 기본적으로 할당된다
       email: {
-        type: DataTypes.STRING(30),
+        type: DataTypes.STRING(40),
         allowNull: false,
         unique: true,
       },
@@ -37,5 +37,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "FollowerId",
     });
   };
+
   return User;
 };

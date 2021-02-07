@@ -3,14 +3,16 @@ const cors = require("cors");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
+const passport = require("passport");
 
 const askRouter = require("./routes/ask");
-const userRouter = require("./routes/ask");
+const userRouter = require("./routes/user");
+
 const db = require("./models");
 const { urlencoded } = require("express");
 
-const passportConfig = require("./passport");
 dotenv.config();
+const passportConfig = require("./passport");
 const app = express();
 
 // DB 연결
@@ -51,10 +53,12 @@ app.use(passport.session());
 app.get("/", (req, res) => {
   res.send("hello home");
 });
-
 app.use("/ask", askRouter);
 app.use("/user", userRouter);
 
-app.listen(3065, () => {
-  console.log("Listening on PORT 3065...");
+// 에러처리 미들웨어
+// app.use((err, req, res, next) => {});
+
+app.listen(8000, () => {
+  console.log("Listening on PORT 8000...");
 });
