@@ -1,14 +1,20 @@
 const express = require("express");
 const router = express.Router();
+const { Ask } = require("../models");
 
-router.post("/", (req, res) => {
-  //post/ask
-  res.json({ id: 1, content: "Hi" });
-});
-
-router.delete("/", (req, res) => {
-  //delete/post
-  res.json({ id: 1 });
+// 질문하기 POST /ask
+router.post("/", async (req, res, next) => {
+  try {
+    console.log(req);
+    const ask = await Ask.create({
+      nickname: req.body.nickname,
+      content: req.body.content,
+    });
+    res.status(201).json(ask);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
 
 module.exports = router;
