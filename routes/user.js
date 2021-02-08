@@ -5,10 +5,31 @@ const { User, Answer } = require("../models");
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send({ id: "hi" });
+router.get("/", async (req, res) => {
+  // GET /user
+  try {
+    if (req.user) {
+      const userInfoWithoutPassword = await User.findOne({
+        where: { id: req.user.id },
+        // password 제외
+        attributes: { exclude: ["password"] },
+        include: [
+          {
+            model: Answer,
+          },
+        ],
+      });
+      return res.status(201).json(userInfoWithoutPassword);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
-// POST /user
+
+// POST /user 회원가입
 router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
     // 기존 유저와 매치

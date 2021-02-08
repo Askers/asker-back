@@ -7,6 +7,7 @@ const passport = require("passport");
 
 const askRouter = require("./routes/ask");
 const userRouter = require("./routes/user");
+const authRouter = require("./routes/auth");
 
 const db = require("./models");
 const { urlencoded } = require("express");
@@ -29,8 +30,8 @@ passportConfig();
 // CORS ERROR solution
 app.use(
   cors({
-    origin: "*",
-    credentials: false, // 나중에 true로 바꿔야 함
+    origin: "http://localhost:3000",
+    credentials: true, // true로 해주어야 쿠키가 프론트로 전달된다
   })
 );
 
@@ -53,6 +54,7 @@ app.use(passport.session());
 app.get("/", (req, res) => {
   res.send("hello home");
 });
+app.use("/auth", authRouter);
 app.use("/ask", askRouter);
 app.use("/user", userRouter);
 
