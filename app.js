@@ -28,9 +28,10 @@ db.sequelize
 passportConfig();
 
 // CORS ERROR solution
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://api.twitter.com/oauth/"],
     credentials: true, // true로 해주어야 쿠키가 프론트로 전달된다
   })
 );

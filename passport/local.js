@@ -2,7 +2,6 @@
 const passport = require("passport");
 const bcrypt = require("bcrypt");
 const { Strategy: LocalStrategy } = require("passport-local");
-
 const { User } = require("../models");
 
 module.exports = () => {
@@ -11,6 +10,8 @@ module.exports = () => {
       {
         usernameField: "email",
         passwordField: "password",
+        session: true,
+        passReqToCallback: false,
       },
       async (email, password, done) => {
         try {

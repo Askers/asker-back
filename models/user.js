@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       // id 기본적으로 할당된다
       email: {
-        type: DataTypes.STRING(40),
+        type: DataTypes.STRING(50),
         allowNull: false,
         unique: true,
       },
