@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const passport = require("passport");
 
 const askRouter = require("./routes/ask");
+const asksRouter = require("./routes/asks");
 const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
 
@@ -17,8 +18,9 @@ const passportConfig = require("./passport");
 const app = express();
 
 // DB 연결
+// alter: true
 db.sequelize
-  .sync({ alter: true })
+  .sync()
   .then(() => {
     console.log("DB SUCCESS");
   })
@@ -31,7 +33,7 @@ passportConfig();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://api.twitter.com/oauth/"],
+    origin: "http://localhost:3000",
     credentials: true, // true로 해주어야 쿠키가 프론트로 전달된다
   })
 );
@@ -57,6 +59,7 @@ app.get("/", (req, res) => {
 });
 app.use("/auth", authRouter);
 app.use("/ask", askRouter);
+app.use("/asks", asksRouter);
 app.use("/user", userRouter);
 
 // 에러처리 미들웨어

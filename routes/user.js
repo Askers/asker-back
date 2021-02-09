@@ -1,31 +1,31 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const { User, Answer } = require("../models");
+const { User, Ask } = require("../models");
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
-  // GET /user
+// GET /user
+router.get("/", async (req, res, next) => {
   try {
     if (req.user) {
-      const userInfoWithoutPassword = await User.findOne({
+      const myInfoWithoutPassword = await User.findOne({
         where: { id: req.user.id },
         // password 제외
         attributes: { exclude: ["password"] },
         include: [
           {
-            model: Answer,
+            model: Ask,
           },
         ],
       });
-      return res.status(201).json(userInfoWithoutPassword);
+      res.status(200).json(myInfoWithoutPassword);
     } else {
       res.status(200).json(null);
     }
-  } catch (error) {
-    console.error(error);
-    next(error);
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
 });
 
@@ -70,17 +70,17 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
         console.error(loginErr);
         return next(loginErr);
       }
-      const userInfoWithoutPassword = await User.findOne({
+      const myInfoWithoutPassword = await User.findOne({
         where: { id: user.id },
         // password 제외
         attributes: { exclude: ["password"] },
         include: [
           {
-            model: Answer,
+            model: Ask,
           },
         ],
       });
-      return res.status(201).json(userInfoWithoutPassword);
+      return res.status(201).json(myInfoWithoutPassword);
     });
   })(req, res, next);
 });
