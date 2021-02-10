@@ -29,6 +29,34 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// GET /user/<특정유저id> 타인의 정보를 가져올 때
+router.get("/:userId", async (req, res, next) => {
+  try {
+    const userInfoWithoutPassword = await User.findOne({
+      where: { id: req.params.userId },
+      // password 제외
+      attributes: { exclude: ["password"] },
+      include: [
+        {
+          model: Ask,
+        },
+      ],
+    });
+    // 개인정보 보호
+    // 내역이 리스트로 전부 전달되지 않도록
+    const data = userInfoWithoutPassword.toJSON();
+    data.Asks = data.Asks.length();
+    if (userInfoWithoutPassword) {
+      res.status(200).json(data);
+    } else {
+      res.status(404).json("존재하지 않는 유저입니다.");
+    }
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 // POST /user 회원가입
 router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
