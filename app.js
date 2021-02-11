@@ -5,7 +5,6 @@ const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const passport = require("passport");
 
-const askRouter = require("./routes/ask");
 const asksRouter = require("./routes/asks");
 const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
@@ -58,7 +57,6 @@ app.get("/", (req, res) => {
   res.send("hello home");
 });
 app.use("/auth", authRouter);
-app.use("/ask", askRouter);
 app.use("/asks", asksRouter);
 app.use("/user", userRouter);
 
