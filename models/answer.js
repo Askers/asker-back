@@ -6,6 +6,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(1500),
         allowNull: false,
       },
+      isAnswered: {
+        type: DataTypes.BOOLEAN(false),
+      },
     },
     {
       charset: "utf8mb4",
