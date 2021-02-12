@@ -5,8 +5,7 @@ const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const passport = require("passport");
 
-const asksRouter = require("./routes/asks");
-const userRouter = require("./routes/user");
+const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
 
 const db = require("./models");
@@ -57,8 +56,7 @@ app.get("/", (req, res) => {
   res.send("hello home");
 });
 app.use("/auth", authRouter);
-app.use("/asks", asksRouter);
-app.use("/user", userRouter);
+app.use("/users", usersRouter);
 
 // 에러처리 미들웨어
 // app.use((err, req, res, next) => {});

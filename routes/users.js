@@ -5,6 +5,32 @@ const { User, Ask } = require("../models");
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 const router = express.Router();
 
+/*
+  PUBLIC
+    유저 메인 홈: users/1
+    - GET /users/<:userId>
+
+    특정 answer 하나만 보여주는 페이지: users/1/1
+    - GET /users/<:userId>/<:answerId>
+
+
+  PRIVATE
+    유저 어드민 페이지: users/1/admin
+    - GET /users/<:userId>/<:answerId>
+
+    특정 ask에 답변: users/1/admin/1
+    - POST /users/<:userId>/<askId>
+
+    
+  FUNCTION
+    `본인 로그인 정보: /users
+    - /users
+    
+    특정 answer 삭제: users/1/1/delete
+    - DELETE /users/<:userId>/<:answerId>/delete   
+*/
+
+// 본인 정보: me
 // GET /user
 router.get("/", async (req, res, next) => {
   try {
@@ -59,60 +85,40 @@ router.get("/:userId", async (req, res, next) => {
   }
 });
 
-// POST /user 회원가입
-router.post("/", isNotLoggedIn, async (req, res, next) => {
+// GET asks/
+router.get("/", async (req, res, next) => {
   try {
-    // 기존 유저와 매치
-    const existUser = await User.findOne({
-      where: {
-        email: req.body.email,
-      },
+    const asks = await Ask.findAll({
+      limit: 10,
+      order: [["createdAt", "DESC"]],
     });
-    console.log(existUser);
-    if (existUser) {
-      return res.status(403).send("이미 사용 중인 email 입니다.");
-    }
-    // password hash
-    const hashedPassword = await bcrypt.hash(req.body.password, 12);
-    await User.create({
-      email: req.body.email,
-      username: req.body.username,
-      password: hashedPassword,
-    });
-    res.status(201).send("ok");
+    res.status(201).json(asks);
   } catch (err) {
     console.error(err);
     next(err);
   }
 });
 
-// POST /user/login
-router.post("/login", isNotLoggedIn, (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (info) {
-      return res.status(401).send(info.reason);
-    }
-    return req.login(user, async (loginErr) => {
-      if (loginErr) {
-        console.error(loginErr);
-        return next(loginErr);
-      }
-      const myInfoWithoutPassword = await User.findOne({
-        where: { id: user.id },
-        // password 제외
-        attributes: { exclude: ["password"] },
-        include: [
-          {
-            model: Ask,
-          },
-        ],
-      });
-      return res.status(201).json(myInfoWithoutPassword);
+// 익명 질문 특정 유저에게 질문하기 POST /asks
+router.post("/", async (req, res, next) => {
+  console.log(req);
+  try {
+    const user = await User.findOne({
+      where: { id: req.body.targetUserId },
     });
-  })(req, res, next);
+    if (!user) {
+      return res.status(403).send("존재하지 않는 유저입니다.");
+    }
+    const ask = await Ask.create({
+      nickname: req.body.nickname,
+      content: req.body.content,
+      UserId: req.body.targetUserId,
+    });
+    res.status(201).json("ok");
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
 
 router.post("/logout", isLoggedIn, (req, res) => {

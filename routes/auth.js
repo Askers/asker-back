@@ -2,6 +2,75 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 
+/*
+    /auth/signup
+    - POST /auth/signup
+
+    /auth/login
+    - POST auth/login
+
+    /auth/1/logout
+    - POST /auth/<:userId>/logout
+    
+
+*/
+
+// POST /signup
+router.post("/signup", isNotLoggedIn, async (req, res, next) => {
+  try {
+    // 기존 유저와 매치
+    const existUser = await User.findOne({
+      where: {
+        email: req.body.email,
+      },
+    });
+    console.log(existUser);
+    if (existUser) {
+      return res.status(403).send("이미 사용 중인 email 입니다.");
+    }
+    // password hash
+    const hashedPassword = await bcrypt.hash(req.body.password, 12);
+    await User.create({
+      email: req.body.email,
+      username: req.body.username,
+      password: hashedPassword,
+    });
+    res.status(201).send("ok");
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// POST /auth/login
+router.post("/login", isNotLoggedIn, (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (info) {
+      return res.status(401).send(info.reason);
+    }
+    return req.login(user, async (loginErr) => {
+      if (loginErr) {
+        console.error(loginErr);
+        return next(loginErr);
+      }
+      const myInfoWithoutPassword = await User.findOne({
+        where: { id: user.id },
+        // password 제외
+        attributes: { exclude: ["password"] },
+        include: [
+          {
+            model: Ask,
+          },
+        ],
+      });
+      return res.status(201).json(myInfoWithoutPassword);
+    });
+  })(req, res, next);
+});
+
 // /auth/twitter
 router.get(
   "/twitter",
