@@ -1,5 +1,8 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
 const passport = require("passport");
+const { User, Ask } = require("../models");
+const { isNotLoggedIn } = require("./middlewares");
 const router = express.Router();
 
 /*
@@ -11,7 +14,6 @@ const router = express.Router();
 
     /auth/1/logout
     - POST /auth/<:userId>/logout
-    
 
 */
 

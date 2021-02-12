@@ -1,4 +1,4 @@
-// 보안
+// Security
 
 // 로그인하지 않은 사용자
 exports.isLoggedIn = (req, res, next) => {
