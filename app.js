@@ -53,9 +53,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Router
-app.get("/", (req, res) => {
-  res.send("hello home");
-});
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/ask", askRouter);

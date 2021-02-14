@@ -1,11 +1,14 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const { User, Ask } = require("../models");
+const { User } = require("../models");
 const { isNotLoggedIn } = require("./middlewares");
 const router = express.Router();
 
 /*
+    /auth
+    - GET  /auth
+
     /auth/signup
     - POST /auth/signup
 
@@ -17,27 +20,20 @@ const router = express.Router();
 
 */
 
-// POST /signup
-router.post("/signup", isNotLoggedIn, async (req, res, next) => {
+// GET /auth
+// 로그인한 유저의 정보 리턴
+router.get("/", async (req, res, next) => {
   try {
-    // 기존 유저와 매치
-    const existUser = await User.findOne({
-      where: {
-        email: req.body.email,
-      },
-    });
-    console.log(existUser);
-    if (existUser) {
-      return res.status(403).send("이미 사용 중인 email 입니다.");
+    if (req.user) {
+      const myInfoWithoutPassword = await User.findOne({
+        where: { id: req.user.id },
+        // password 제외
+        attributes: { exclude: ["password"] },
+      });
+      res.status(201).json(myInfoWithoutPassword);
+    } else {
+      res.status(200).json(null);
     }
-    // password hash
-    const hashedPassword = await bcrypt.hash(req.body.password, 12);
-    await User.create({
-      email: req.body.email,
-      username: req.body.username,
-      password: hashedPassword,
-    });
-    res.status(201).send("ok");
   } catch (err) {
     console.error(err);
     next(err);
@@ -62,15 +58,37 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
         where: { id: user.id },
         // password 제외
         attributes: { exclude: ["password"] },
-        include: [
-          {
-            model: Ask,
-          },
-        ],
       });
       return res.status(201).json(myInfoWithoutPassword);
     });
   })(req, res, next);
+});
+
+// POST /signup
+router.post("/signup", isNotLoggedIn, async (req, res, next) => {
+  try {
+    // 기존 유저와 매치
+    const existUser = await User.findOne({
+      where: {
+        email: req.body.email,
+      },
+    });
+    console.log(existUser);
+    if (existUser) {
+      return res.status(403).send("이미 사용 중인 email 입니다.");
+    }
+    // password hash
+    const hashedPassword = await bcrypt.hash(req.body.password, 12);
+    await User.create({
+      email: req.body.email,
+      username: req.body.username,
+      password: hashedPassword,
+    });
+    res.status(201).json("ok");
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
 
 // /auth/twitter

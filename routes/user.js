@@ -22,8 +22,8 @@ const router = express.Router();
 
     
   FUNCTION
-    `본인 로그인 정보: /users
-    - /users
+    `본인 로그인 정보: /user
+    - /user
     
     특정 answer 삭제: users/1/1/delete
     - DELETE /users/<:userId>/<:answerId>/delete   
