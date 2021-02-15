@@ -7,13 +7,15 @@ const passport = require("passport");
 
 const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
-const askRouter = require("./routes/ask");
+const askRouter = require("./routes/asks");
+const answerRouter = require("./routes/answers");
 
 const db = require("./models");
 const { urlencoded } = require("express");
 
 dotenv.config();
 const passportConfig = require("./passport");
+const answer = require("./models/answer");
 const app = express();
 
 // DB 연결
@@ -55,7 +57,8 @@ app.use(passport.session());
 // Router
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
-app.use("/ask", askRouter);
+app.use("/asks", askRouter);
+app.use("/answers", answerRouter);
 
 // 에러처리 미들웨어
 // app.use((err, req, res, next) => {});

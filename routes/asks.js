@@ -6,12 +6,12 @@ const { isNotLoggedIn } = require("./middlewares");
 const router = express.Router();
 
 /*
-    /ask
+    /asks/:targetUserId
     특정 유저에게 ask 보내기
 
 */
 
-// 익명 질문 특정 유저에게 질문하기 POST /ask
+// 익명 질문 특정 유저에게 질문하기 POST /asks/:targetUserId
 router.post("/:targetUserId", async (req, res, next) => {
   try {
     const user = await User.findOne({
