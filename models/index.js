@@ -1,4 +1,10 @@
 const Sequelize = require("sequelize");
+
+const answer = require("./answer");
+const ask = require("./ask");
+const hashtag = require("./hashtag");
+const user = require("./user");
+
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
 const db = {};
@@ -10,13 +16,16 @@ const sequelize = new Sequelize(
   config
 );
 
-db.Answer = require("./answer")(sequelize, Sequelize);
-db.Ask = require("./ask")(sequelize, Sequelize);
-db.User = require("./user")(sequelize, Sequelize);
-db.Hashtag = require("./hashtag")(sequelize, Sequelize);
-db.Image = require("./image")(sequelize, Sequelize);
+db.Answer = answer;
+db.Ask = ask;
+db.User = user;
+db.Hashtag = hashtag;
 
 /* 반복문 돌면서 db에 models 등록 */
+Object.keys(db).forEach((modelName) => {
+  db[modelName].init(sequelize);
+});
+
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
