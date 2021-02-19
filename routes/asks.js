@@ -33,7 +33,8 @@ router.post("/:targetUserId", async (req, res, next) => {
 });
 
 // GET asks/
-router.get("/", async (req, res, next) => {
+router.get("/:userId", async (req, res, next) => {
+  console.log(req.params.userId);
   try {
     const asks = await Ask.findAll({
       limit: 10,

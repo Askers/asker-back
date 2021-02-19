@@ -15,7 +15,8 @@ const router = express.Router();
 */
 
 // GET answers/
-router.get("/", async (req, res, next) => {
+router.get("/:userId", async (req, res, next) => {
+  console.log(req.params.userId);
   try {
     const answers = await Answer.findAll({
       limit: 10,
