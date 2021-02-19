@@ -23,9 +23,8 @@ module.exports = class Answer extends Model {
     );
   }
 
-  static associations(db) {
+  static associate(db) {
     db.Answer.belongsTo(db.User);
     db.Answer.belongsTo(db.Ask);
-    db.Answer.hasMany(db.Image);
   }
 };

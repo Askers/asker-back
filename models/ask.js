@@ -24,10 +24,9 @@ module.exports = class Ask extends Model {
     );
   }
 
-  static associations(db) {
+  static associate(db) {
     db.Ask.belongsTo(db.User);
     db.Ask.belongsTo(db.Ask);
-    db.Ask.hasMany(db.Image);
     db.Ask.belongsToMany(db.Hashtag, { through: "Hashtaged" });
     db.Ask.belongsToMany(db.User, { through: "Like", as: "Likers" });
   }
