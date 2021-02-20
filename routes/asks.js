@@ -23,7 +23,7 @@ router.post("/:targetUserId", async (req, res, next) => {
     const ask = await Ask.create({
       nickname: req.body.nickname,
       content: req.body.content,
-      UserId: req.body.targetUserId,
+      target_user_id: req.body.targetUserId,
     });
     res.status(201).json(ask);
   } catch (err) {
@@ -33,22 +33,22 @@ router.post("/:targetUserId", async (req, res, next) => {
 });
 
 // GET asks/
-// 프론트에서 보낸 라우터의 유저 주소와 req.user의 값이 같은 경우만 반환
+// 1/admin 부분에 들어가는 데이터 전송
+// 프론트에서 보낸 라우터의 유저 주소와 req.user의 값이 같을 때 반환
 router.get("/:userId", async (req, res, next) => {
   if (req.user === req.params.userId) {
-    try {
-      const asks = await Ask.findAll({
-        where: { UserId: req.user },
-        limit: 10,
-        order: [["createdAt", "DESC"]],
-      });
-      res.status(201).json(asks);
-    } catch (err) {
-      console.error(err);
-      next(err);
-    }
-  } else {
-    res.status(500).send("잘못된 접근입니다.");
+    return res.status(503).send("잘못된 접근입니다.");
+  }
+
+  try {
+    // 해당 라우터 유저 정보(username,)
+    const asks = await Ask.findAll({
+      where: { target_user_id: req.user.id },
+    });
+    res.status(201).json(asks);
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
 });
 

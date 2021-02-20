@@ -19,7 +19,7 @@ const router = express.Router();
 router.get("/:userId", async (req, res, next) => {
   try {
     const answers = await Answer.findAll({
-      where: { UserId: req.params.userId },
+      where: { target_user_id: req.params.userId },
       limit: 10,
       order: [["createdAt", "DESC"]],
     });
@@ -31,17 +31,17 @@ router.get("/:userId", async (req, res, next) => {
 });
 
 // 특정 질문에 대답하기 POST /answers/askId
-router.post("/:targetAskId", async (req, res, next) => {
+router.post("/:linkedAskId", async (req, res, next) => {
   try {
     const ask = await Ask.findOne({
-      where: { id: req.params.targetUserId },
+      where: { id: req.params.linkedAskId },
     });
     if (!ask) {
       return res.status(403).send("존재하지 않는 ask입니다.");
     }
     const answer = await Answer.create({
       content: req.body.content,
-      AskId: req.body.targetAskId,
+      linked_ask_id: req.body.linkedAskId,
       UserId: req.user.id,
       isAnswered: true,
     });

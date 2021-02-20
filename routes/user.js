@@ -38,11 +38,6 @@ router.get("/", async (req, res, next) => {
         where: { id: req.user.id },
         // password 제외
         attributes: { exclude: ["password"] },
-        include: [
-          {
-            model: Ask,
-          },
-        ],
       });
       res.status(200).json(myInfoWithoutPassword);
     } else {
