@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const { User, Ask, Answer } = require("../models");
-const { isNotLoggedIn } = require("./middlewares");
+const { isNotLoggedIn, isLoggedIn } = require("./middlewares");
 const router = express.Router();
 
 /*
@@ -31,19 +31,19 @@ router.get("/:userId", async (req, res, next) => {
 });
 
 // 특정 질문에 대답하기 POST /answers/askId
-router.post("/:linkedAskId", async (req, res, next) => {
+router.post("/:askId", isLoggedIn, async (req, res, next) => {
   try {
     const ask = await Ask.findOne({
-      where: { id: req.params.linkedAskId },
+      where: { id: req.params.askId },
     });
     if (!ask) {
       return res.status(403).send("존재하지 않는 ask입니다.");
     }
     const answer = await Answer.create({
-      content: req.body.content,
-      linked_ask_id: req.body.linkedAskId,
-      UserId: req.user.id,
-      isAnswered: true,
+      content: req.body.answer,
+      linked_ask_id: req.params.askId,
+      target_user_id: req.user.id,
+      is_answered: true,
     });
     res.status(201).json(answer);
   } catch (err) {
