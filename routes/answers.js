@@ -39,12 +39,19 @@ router.post("/:askId", isLoggedIn, async (req, res, next) => {
     if (!ask) {
       return res.status(403).send("존재하지 않는 ask입니다.");
     }
+    const existAnswer = await Answer.findOne({
+      where: { linked_ask_id: req.params.askId },
+    });
+    if (existAnswer !== null) {
+      return res.status(403).send("이미 답변한 질문입니다.");
+    }
     const answer = await Answer.create({
       content: req.body.answer,
       linked_ask_id: req.params.askId,
       target_user_id: req.user.id,
-      is_answered: true,
     });
+
+    // 리다이렉트 걸어주면 좋겠다...
     res.status(201).json(answer);
   } catch (err) {
     console.error(err);
