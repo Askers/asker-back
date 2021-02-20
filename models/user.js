@@ -25,14 +25,18 @@ module.exports = class User extends Model {
         modelName: "User",
         charset: "utf8",
         collate: "utf8_general_ci",
+        underscored: true,
         sequelize,
       }
     );
   }
 
   static associate(db) {
-    db.User.hasMany(db.Ask);
-    db.User.hasMany(db.Answer);
+    db.User.hasMany(db.Ask, { foreignKey: "target_user_id", sourceKey: "id" });
+    db.User.hasMany(db.Answer, {
+      foreignKey: "target_user_id",
+      sourceKey: "id",
+    });
     db.User.belongsToMany(db.Ask, { through: "Like", as: "Liked" });
     db.User.belongsToMany(db.User, {
       through: "Follow",

@@ -18,13 +18,20 @@ module.exports = class Answer extends Model {
         modelName: "Answer",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci", //ㅇㅣ모티콘
+        underscored: true,
         sequelize,
       }
     );
   }
 
   static associate(db) {
-    db.Answer.belongsTo(db.User);
-    db.Answer.belongsTo(db.Ask);
+    db.Answer.belongsTo(db.User, {
+      foreignKey: "target_user_id",
+      targetKey: "id",
+    });
+    db.Answer.belongsTo(db.Ask, {
+      foreignKey: "linked_ask_id",
+      targetKey: "id",
+    });
   }
 };
