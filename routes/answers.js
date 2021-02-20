@@ -15,10 +15,11 @@ const router = express.Router();
 */
 
 // GET answers/
+// 라우터의 유저 아이디와 작성자가 일치하는 모든 asks
 router.get("/:userId", async (req, res, next) => {
-  console.log(req.params.userId);
   try {
     const answers = await Answer.findAll({
+      where: { UserId: req.params.userId },
       limit: 10,
       order: [["createdAt", "DESC"]],
     });

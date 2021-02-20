@@ -33,17 +33,22 @@ router.post("/:targetUserId", async (req, res, next) => {
 });
 
 // GET asks/
+// 프론트에서 보낸 라우터의 유저 주소와 req.user의 값이 같은 경우만 반환
 router.get("/:userId", async (req, res, next) => {
-  console.log(req.params.userId);
-  try {
-    const asks = await Ask.findAll({
-      limit: 10,
-      order: [["createdAt", "DESC"]],
-    });
-    res.status(201).json(asks);
-  } catch (err) {
-    console.error(err);
-    next(err);
+  if (req.user === req.params.userId) {
+    try {
+      const asks = await Ask.findAll({
+        where: { UserId: req.user },
+        limit: 10,
+        order: [["createdAt", "DESC"]],
+      });
+      res.status(201).json(asks);
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
+  } else {
+    res.status(500).send("잘못된 접근입니다.");
   }
 });
 
