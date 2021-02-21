@@ -24,6 +24,7 @@ router.post("/:targetUserId", async (req, res, next) => {
       nickname: req.body.nickname,
       content: req.body.content,
       target_user_id: req.body.targetUserId,
+      is_answered: false,
     });
     res.status(201).json(ask);
   } catch (err) {
@@ -41,7 +42,7 @@ router.get("/:userId", async (req, res, next) => {
   }
 
   try {
-    // 해당 라우터 유저 정보(username,)
+    // 해당 라우터 유저 정보(username과 일치, is_answered: true 제외)
     const asks = await Ask.findAll({
       where: { target_user_id: req.user.id },
       limit: 10,

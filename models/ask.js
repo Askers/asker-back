@@ -14,6 +14,9 @@ module.exports = class Ask extends Model {
           type: DataTypes.STRING(1500),
           allowNull: false,
         },
+        isAnswered: {
+          type: DataTypes.BOOLEAN(false),
+        },
       },
       {
         modelName: "Ask",

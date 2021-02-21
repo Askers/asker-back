@@ -10,9 +10,6 @@ module.exports = class Answer extends Model {
           type: DataTypes.STRING(1500),
           allowNull: false,
         },
-        isAnswered: {
-          type: DataTypes.BOOLEAN(false),
-        },
       },
       {
         modelName: "Answer",
