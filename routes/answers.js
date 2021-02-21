@@ -22,6 +22,12 @@ router.get("/:userId", async (req, res, next) => {
       where: { target_user_id: req.params.userId },
       limit: 10,
       order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: Ask,
+          attributes: ["nickname", "content"],
+        },
+      ],
     });
     res.status(201).json(answers);
   } catch (err) {

@@ -11,7 +11,7 @@ module.exports = class Answer extends Model {
           allowNull: false,
         },
         isAnswered: {
-          type: DataTypes.BOOLEAN,
+          type: DataTypes.BOOLEAN(false),
         },
       },
       {
