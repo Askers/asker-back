@@ -43,7 +43,6 @@ router.get("/", async (req, res, next) => {
 // GET /auth/:userId
 // 해당 라우터의 유저 정보 리턴
 router.get("/:userId", async (req, res, next) => {
-  console.log(req.params.userId);
   try {
     const userData = await User.findOne({
       where: { id: req.params.userId },

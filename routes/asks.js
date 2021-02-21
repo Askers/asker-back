@@ -44,6 +44,8 @@ router.get("/:userId", async (req, res, next) => {
     // 해당 라우터 유저 정보(username,)
     const asks = await Ask.findAll({
       where: { target_user_id: req.user.id },
+      limit: 10,
+      order: [["createdAt", "DESC"]],
     });
     res.status(201).json(asks);
   } catch (err) {
