@@ -24,7 +24,6 @@ router.post("/:targetUserId", async (req, res, next) => {
       nickname: req.body.nickname,
       content: req.body.content,
       target_user_id: req.body.targetUserId,
-      is_answered: false,
     });
     res.status(201).json(ask);
   } catch (err) {
@@ -46,7 +45,7 @@ router.get("/:userId", async (req, res, next) => {
     const asks = await Ask.findAll({
       where: {
         target_user_id: req.user.id,
-        is_answered: false,
+        is_answered: 0,
       },
       limit: 10,
       order: [["createdAt", "DESC"]],
@@ -75,12 +74,13 @@ router.delete("/:askId", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// PATCH ask is_answered true ----> false
+// PATCH ask is_answered false ----> true
+// 질문 답변 함으로 만들기
 router.patch("/:askId/t", isLoggedIn, async (req, res, next) => {
   try {
     await Ask.update(
       {
-        is_answered: true,
+        is_answered: 1,
       },
       {
         where: { id: req.params.askId },
@@ -93,12 +93,13 @@ router.patch("/:askId/t", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// PATCH ask is_answered false ----> true
+// PATCH ask is_answered true ----> false
+// 질문 답변 안 함으로 만들기
 router.patch("/:askId/f", isLoggedIn, async (req, res, next) => {
   try {
     await Ask.update(
       {
-        is_answered: false,
+        is_answered: 0,
       },
       {
         where: { id: req.params.askId },

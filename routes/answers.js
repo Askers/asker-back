@@ -19,13 +19,13 @@ const router = express.Router();
 router.get("/:userId", async (req, res, next) => {
   try {
     const answers = await Answer.findAll({
-      where: { target_user_id: req.params.userId },
+      where: { target_user_id: req.params.userId, deleted_at: null },
       limit: 10,
       order: [["createdAt", "DESC"]],
       include: [
         {
           model: Ask,
-          attributes: ["nickname", "content"],
+          attributes: ["id", "nickname", "content"],
         },
       ],
     });
@@ -67,6 +67,7 @@ router.post("/:askId", isLoggedIn, async (req, res, next) => {
 
 // 특정 질문 삭제하기
 router.delete("/:answerId", isLoggedIn, async (req, res, next) => {
+  console.log(req.params);
   try {
     await Answer.destroy({
       where: {
