@@ -70,12 +70,6 @@ router.post("/:askId", isLoggedIn, async (req, res, next) => {
       return res.status(403).send("존재하지 않는 ask입니다.");
     }
 
-    // const existAnswer = await Answer.findOne({
-    //   where: { linked_ask_id: req.params.askId },
-    // });
-    // if (existAnswer) {
-    //   return res.status(403).send("이미 답변한 질문입니다.");
-    // }
     const answer = await Answer.create({
       content: req.body.answer,
       linked_ask_id: req.params.askId,
