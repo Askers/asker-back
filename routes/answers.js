@@ -65,4 +65,21 @@ router.post("/:askId", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// 특정 질문 삭제하기
+router.delete("/:answerId", isLoggedIn, async (req, res, next) => {
+  try {
+    await Answer.destroy({
+      where: {
+        id: req.params.answerId,
+        target_user_id: req.user.id,
+      },
+    });
+
+    res.status(201).send("답변을 삭제했습니다.");
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 module.exports = router;

@@ -44,7 +44,10 @@ router.get("/:userId", async (req, res, next) => {
   try {
     // 해당 라우터 유저 정보(username과 일치, is_answered: true 제외)
     const asks = await Ask.findAll({
-      where: { target_user_id: req.user.id },
+      where: {
+        target_user_id: req.user.id,
+        is_answered: false,
+      },
       limit: 10,
       order: [["createdAt", "DESC"]],
     });
