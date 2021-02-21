@@ -1,7 +1,5 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-const passport = require("passport");
-const { User, Ask, Answer } = require("../models");
+const { Ask, Answer } = require("../models");
 const { isNotLoggedIn, isLoggedIn } = require("./middlewares");
 const router = express.Router();
 
@@ -36,6 +34,32 @@ router.get("/:userId", async (req, res, next) => {
   }
 });
 
+// 특정 답변 가져오기 GET / api/:answerId
+// router.get("/api/:answerId", async (req, res, next) => {
+//   try {
+//     const existAnswer = await findOne({
+//       where: { id: req.params.answerId, linked_ask_id: req.params.answerId },
+//     });
+
+//     if (!existAnswer) {
+//       return res.status(403).send("답변이 없습니다.");
+//     }
+//     const answer = await findOne({
+//       where: { id: req.params.answerId },
+//       include: [
+//         {
+//           model: Ask,
+//           attributes: ["id", "nickname", "content"],
+//         },
+//       ],
+//     });
+//     res.status(201).json(answer);
+//   } catch (err) {
+//     console.error(err);
+//     next(err);
+//   }
+// });
+
 // 특정 질문에 대답하기 POST /answers/askId
 router.post("/:askId", isLoggedIn, async (req, res, next) => {
   try {
@@ -69,16 +93,6 @@ router.post("/:askId", isLoggedIn, async (req, res, next) => {
 // 특정 답변 삭제하기
 router.delete("/:answerId/delete", isLoggedIn, async (req, res, next) => {
   try {
-    await Ask.update(
-      {
-        is_answered: false,
-      },
-      {
-        where: {
-          id: req.body.askId,
-        },
-      }
-    );
     await Answer.destroy({
       where: {
         id: req.params.answerId,
