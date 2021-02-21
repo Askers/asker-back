@@ -19,7 +19,7 @@ const router = express.Router();
 router.get("/:userId", async (req, res, next) => {
   try {
     const answers = await Answer.findAll({
-      where: { target_user_id: req.params.userId, deleted_at: null },
+      where: { target_user_id: req.params.userId },
       limit: 10,
       order: [["createdAt", "DESC"]],
       include: [
@@ -45,12 +45,13 @@ router.post("/:askId", isLoggedIn, async (req, res, next) => {
     if (!ask) {
       return res.status(403).send("존재하지 않는 ask입니다.");
     }
-    const existAnswer = await Answer.findOne({
-      where: { linked_ask_id: req.params.askId },
-    });
-    if (existAnswer !== null) {
-      return res.status(403).send("이미 답변한 질문입니다.");
-    }
+
+    // const existAnswer = await Answer.findOne({
+    //   where: { linked_ask_id: req.params.askId },
+    // });
+    // if (existAnswer) {
+    //   return res.status(403).send("이미 답변한 질문입니다.");
+    // }
     const answer = await Answer.create({
       content: req.body.answer,
       linked_ask_id: req.params.askId,
@@ -65,10 +66,19 @@ router.post("/:askId", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// 특정 질문 삭제하기
-router.delete("/:answerId", isLoggedIn, async (req, res, next) => {
-  console.log(req.params);
+// 특정 답변 삭제하기
+router.delete("/:answerId/delete", isLoggedIn, async (req, res, next) => {
   try {
+    await Ask.update(
+      {
+        is_answered: false,
+      },
+      {
+        where: {
+          id: req.body.askId,
+        },
+      }
+    );
     await Answer.destroy({
       where: {
         id: req.params.answerId,

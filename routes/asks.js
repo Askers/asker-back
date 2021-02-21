@@ -37,13 +37,12 @@ router.get("/:userId", async (req, res, next) => {
   if (req.user === req.params.userId) {
     return res.status(503).send("잘못된 접근입니다.");
   }
-
   try {
     // 해당 라우터 유저 정보(username과 일치, is_answered: true 제외)
     const asks = await Ask.findAll({
       where: {
         target_user_id: req.user.id,
-        is_answered: false,
+        is_answered: 0,
       },
       limit: 10,
       order: [["createdAt", "DESC"]],
@@ -63,9 +62,9 @@ router.delete("/:askId", isLoggedIn, async (req, res, next) => {
       where: {
         id: req.params.askId,
         target_user_id: req.user.id,
-        is_answered: false,
       },
     });
+
     res.status(201).send("성공적으로 삭제했습니다.");
   } catch (err) {
     console.error(err);
@@ -73,42 +72,40 @@ router.delete("/:askId", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// PATCH ask is_answered false ----> true
-// 질문 답변 함으로 만들기
-router.patch("/:askId/t", isLoggedIn, async (req, res, next) => {
-  try {
-    await Ask.update(
-      {
-        is_answered: true,
-      },
-      {
-        where: { id: req.params.askId },
-        target_user_id: req.user.id,
-      }
-    );
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-});
+// // PATCH ask is_answered false ----> true
+// // 질문 답변 함으로 만들기
+// router.patch("/:askId/t", isLoggedIn, async (req, res, next) => {
+//   try {
+//     await Ask.update(
+//       {
+//         is_answered: 1,
+//       },
+//       {
+//         where: { id: req.params.askId, target_user_id: req.user.id },
+//       }
+//     );
+//   } catch (err) {
+//     console.error(err);
+//     next(err);
+//   }
+// });
 
-// PATCH ask is_answered true ----> false
-// 질문 답변 안 함으로 만들기
-router.patch("/:askId/f", isLoggedIn, async (req, res, next) => {
-  try {
-    await Ask.update(
-      {
-        is_answered: false,
-      },
-      {
-        where: { id: req.params.askId },
-        target_user_id: req.user.id,
-      }
-    );
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-});
+// // PATCH ask is_answered true ----> false
+// // 질문 답변 안 함으로 만들기
+// router.patch("/:askId/f", isLoggedIn, async (req, res, next) => {
+//   try {
+//     await Ask.update(
+//       {
+//         is_answered: false,
+//       },
+//       {
+//         where: { id: req.params.askId, target_user_id: req.user.id },
+//       }
+//     );
+//   } catch (err) {
+//     console.error(err);
+//     next(err);
+//   }
+// });
 
 module.exports = router;
