@@ -23,7 +23,6 @@ module.exports = class Ask extends Model {
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci", //ㅇㅣ모티콘
         underscored: true,
-        paranoid: true,
         sequelize,
       }
     );

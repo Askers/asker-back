@@ -1,8 +1,6 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-const passport = require("passport");
 const { User, Ask } = require("../models");
-const { isNotLoggedIn, isLoggedIn } = require("./middlewares");
+const { isLoggedIn } = require("./middlewares");
 const router = express.Router();
 
 /*
@@ -12,10 +10,10 @@ const router = express.Router();
 */
 
 // 익명 질문 특정 유저에게 질문하기 POST /asks/:targetUserId
-router.post("/:targetUserId", async (req, res, next) => {
+router.post("/:userId", async (req, res, next) => {
   try {
     const user = await User.findOne({
-      where: { id: req.params.targetUserId },
+      where: { id: req.params.userId },
     });
     if (!user) {
       return res.status(403).send("존재하지 않는 유저입니다.");
@@ -23,7 +21,8 @@ router.post("/:targetUserId", async (req, res, next) => {
     const ask = await Ask.create({
       nickname: req.body.nickname,
       content: req.body.content,
-      target_user_id: req.body.targetUserId,
+      target_user_id: req.params.userId,
+      is_answered: false,
     });
     res.status(201).json(ask);
   } catch (err) {
