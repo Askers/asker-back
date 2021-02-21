@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const { User, Ask } = require("../models");
-const { isNotLoggedIn } = require("./middlewares");
+const { isNotLoggedIn, isLoggedIn } = require("./middlewares");
 const router = express.Router();
 
 /*
@@ -49,6 +49,59 @@ router.get("/:userId", async (req, res, next) => {
       order: [["createdAt", "DESC"]],
     });
     res.status(201).json(asks);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// DELETE 특정 ASK
+router.delete("/:askId", isLoggedIn, async (req, res, next) => {
+  try {
+    // 있으면 삭제
+    await Ask.destroy({
+      where: {
+        id: req.params.askId,
+        target_user_id: req.user.id,
+      },
+    });
+    res.status(201).send("성공적으로 삭제했습니다.");
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// PATCH ask is_answered true ----> false
+router.patch("/:askId/t", isLoggedIn, async (req, res, next) => {
+  try {
+    await Ask.update(
+      {
+        is_answered: true,
+      },
+      {
+        where: { id: req.params.askId },
+        target_user_id: req.user.id,
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// PATCH ask is_answered false ----> true
+router.patch("/:askId/f", isLoggedIn, async (req, res, next) => {
+  try {
+    await Ask.update(
+      {
+        is_answered: false,
+      },
+      {
+        where: { id: req.params.askId },
+        target_user_id: req.user.id,
+      }
+    );
   } catch (err) {
     console.error(err);
     next(err);
