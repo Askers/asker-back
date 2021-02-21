@@ -20,7 +20,7 @@ const app = express();
 // DB 연결
 // alter: true
 db.sequelize
-  .sync({ alter: true })
+  .sync()
   .then(() => {
     console.log("DB SUCCESS");
   })
