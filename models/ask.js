@@ -15,7 +15,7 @@ module.exports = class Ask extends Model {
           allowNull: false,
         },
         isAnswered: {
-          type: DataTypes.TINYINT(0),
+          type: DataTypes.BOOLEAN,
         },
       },
       {
