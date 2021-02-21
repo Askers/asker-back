@@ -9,7 +9,7 @@ const router = express.Router();
 
 */
 
-// 익명 질문 특정 유저에게 질문하기 POST /asks/:targetUserId
+// 익명 질문 특정 유저에게 질문하기 POST
 router.post("/:userId", async (req, res, next) => {
   try {
     const user = await User.findOne({
@@ -22,7 +22,6 @@ router.post("/:userId", async (req, res, next) => {
       nickname: req.body.nickname,
       content: req.body.content,
       target_user_id: req.params.userId,
-      is_answered: false,
     });
     res.status(201).json(ask);
   } catch (err) {

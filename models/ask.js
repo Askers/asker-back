@@ -16,6 +16,7 @@ module.exports = class Ask extends Model {
         },
         isAnswered: {
           type: DataTypes.BOOLEAN,
+          defaultValue: false,
         },
       },
       {
