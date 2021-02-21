@@ -40,6 +40,26 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// GET /auth/:userId
+// 해당 라우터의 유저 정보 리턴
+router.get("/:userId", async (req, res, next) => {
+  console.log(req.params.userId);
+  try {
+    const userData = await User.findOne({
+      where: { id: req.params.userId },
+      attributes: { exclude: ["password"] },
+    });
+
+    if (!userData) {
+      return res.status(404).send("존재하지 않는 유저입니다.");
+    }
+    res.status(201).json(userData);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 // POST /auth/login
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {

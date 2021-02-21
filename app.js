@@ -5,7 +5,6 @@ const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const passport = require("passport");
 
-const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
 const askRouter = require("./routes/asks");
 const answerRouter = require("./routes/answers");
@@ -56,7 +55,6 @@ app.use(passport.session());
 
 // Router
 app.use("/auth", authRouter);
-app.use("/user", userRouter);
 app.use("/asks", askRouter);
 app.use("/answers", answerRouter);
 
