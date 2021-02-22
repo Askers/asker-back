@@ -34,31 +34,35 @@ router.get("/:userId", async (req, res, next) => {
   }
 });
 
-// 특정 답변 가져오기 GET / api/:answerId
-// router.get("/api/:answerId", async (req, res, next) => {
-//   try {
-//     const existAnswer = await findOne({
-//       where: { id: req.params.answerId, linked_ask_id: req.params.answerId },
-//     });
+// 특정 답변 가져오기 GET / :userId/:answerId
+router.get("/:userId/:answerId", async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    const answerId = parseInt(req.params.answerId);
+    const askId = parseInt(req.query.askId);
 
-//     if (!existAnswer) {
-//       return res.status(403).send("답변이 없습니다.");
-//     }
-//     const answer = await findOne({
-//       where: { id: req.params.answerId },
-//       include: [
-//         {
-//           model: Ask,
-//           attributes: ["id", "nickname", "content"],
-//         },
-//       ],
-//     });
-//     res.status(201).json(answer);
-//   } catch (err) {
-//     console.error(err);
-//     next(err);
-//   }
-// });
+    const existAnswer = await Answer.findOne({
+      where: { id: answerId, linked_ask_id: askId, target_user_id: userId },
+    });
+
+    if (!existAnswer) {
+      return res.status(403).send("이미 삭제된 답변입니다.");
+    }
+    const answer = await findOne({
+      where: { id: answerId, linked_ask_id: askId, target_user_id: userId },
+      include: [
+        {
+          model: Ask,
+          attributes: ["id", "nickname", "content"],
+        },
+      ],
+    });
+    res.status(201).json(answer);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
 
 // 특정 질문에 대답하기 POST /answers/askId
 router.post("/:askId", isLoggedIn, async (req, res, next) => {
