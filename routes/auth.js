@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const { User } = require("../models");
-const { isNotLoggedIn } = require("./middlewares");
+const { isNotLoggedIn, isLoggedIn } = require("./middlewares");
 const router = express.Router();
 
 /*
@@ -16,7 +16,7 @@ const router = express.Router();
     - POST auth/login
 
     /auth/1/logout
-    - POST /auth/<:userId>/logout
+    - POST /auth/logout
 
 */
 
@@ -81,6 +81,13 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
       return res.status(201).json(myInfoWithoutPassword);
     });
   })(req, res, next);
+});
+
+// POST /logout
+router.post("/logout", isLoggedIn, async (req, res, next) => {
+  req.logout();
+  req.session.destroy();
+  res.send("ok");
 });
 
 // POST /signup
