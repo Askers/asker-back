@@ -63,16 +63,29 @@ router.get("/:userId", async (req, res, next) => {
 // 특정 질문에 대답하기 POST /answers/askId
 router.post("/:askId", isLoggedIn, async (req, res, next) => {
   try {
+    const askId = parseInt(req.params.askId);
+    console.log("질문에 답변: POST 라우터 실행");
     const ask = await Ask.findOne({
-      where: { id: req.params.askId },
+      where: { id: askId },
     });
+    console.log(ask);
     if (!ask) {
+      // 해당 질문이 없으면 리다이렉트
       return res.status(403).send("존재하지 않는 ask입니다.");
     }
+    // 해당 질문이 있으면 is_answered를 true로 변경
+    await Ask.update(
+      {
+        isAnswered: true,
+      },
+      {
+        where: { id: askId },
+      }
+    );
 
     const answer = await Answer.create({
       content: req.body.answer,
-      linked_ask_id: req.params.askId,
+      linked_ask_id: askId,
       target_user_id: req.user.id,
     });
 
@@ -85,20 +98,39 @@ router.post("/:askId", isLoggedIn, async (req, res, next) => {
 });
 
 // 특정 답변 삭제하기
-router.delete("/:answerId/delete", isLoggedIn, async (req, res, next) => {
-  try {
-    await Answer.destroy({
-      where: {
-        id: req.params.answerId,
-        target_user_id: req.user.id,
-      },
-    });
+router.delete(
+  "/:answerId/delete/:askId",
+  isLoggedIn,
+  async (req, res, next) => {
+    try {
+      console.log("답변 삭제: DELETE 라우터 실행");
+      const answerId = parseInt(req.params.answerId);
+      const askId = parseInt(req.params.askId);
 
-    res.status(201).send("답변을 삭제했습니다.");
-  } catch (err) {
-    console.error(err);
-    next(err);
+      // 해당 답변에 연결된 ask의 is_answered 컬럼값 false로 변경
+      await Ask.update(
+        {
+          isAnswered: false,
+        },
+        {
+          where: { id: askId },
+        }
+      );
+
+      // 답변 삭제
+      await Answer.destroy({
+        where: {
+          id: answerId,
+          target_user_id: req.user.id,
+        },
+      });
+
+      res.status(201).send("답변을 삭제했습니다.");
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
   }
-});
+);
 
 module.exports = router;

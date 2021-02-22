@@ -42,7 +42,7 @@ router.get("/:userId", async (req, res, next) => {
     const asks = await Ask.findAll({
       where: {
         target_user_id: req.user.id,
-        is_answered: 0,
+        is_answered: false,
       },
       limit: 10,
       order: [["createdAt", "DESC"]],
@@ -71,41 +71,5 @@ router.delete("/:askId", isLoggedIn, async (req, res, next) => {
     next(err);
   }
 });
-
-// // PATCH ask is_answered false ----> true
-// // 질문 답변 함으로 만들기
-// router.patch("/:askId/t", isLoggedIn, async (req, res, next) => {
-//   try {
-//     await Ask.update(
-//       {
-//         is_answered: 1,
-//       },
-//       {
-//         where: { id: req.params.askId, target_user_id: req.user.id },
-//       }
-//     );
-//   } catch (err) {
-//     console.error(err);
-//     next(err);
-//   }
-// });
-
-// // PATCH ask is_answered true ----> false
-// // 질문 답변 안 함으로 만들기
-// router.patch("/:askId/f", isLoggedIn, async (req, res, next) => {
-//   try {
-//     await Ask.update(
-//       {
-//         is_answered: false,
-//       },
-//       {
-//         where: { id: req.params.askId, target_user_id: req.user.id },
-//       }
-//     );
-//   } catch (err) {
-//     console.error(err);
-//     next(err);
-//   }
-// });
 
 module.exports = router;
