@@ -1,5 +1,6 @@
 const express = require("express");
 const { Ask, Answer } = require("../models");
+const { Op } = require("sequelize");
 const { isNotLoggedIn, isLoggedIn } = require("./middlewares");
 const router = express.Router();
 
@@ -16,8 +17,16 @@ const router = express.Router();
 // 라우터의 유저 아이디와 작성자가 일치하는 모든 asks
 router.get("/:userId", async (req, res, next) => {
   try {
+    const userId = parseInt(req.params.userId);
+    const where = { target_user_id: userId };
+
+    if (parseInt(req.query.lastId, 10)) {
+      // 초기 로딩이 아닐 때
+      // id가 lastId 보다 작은
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
+    }
     const answers = await Answer.findAll({
-      where: { target_user_id: req.params.userId },
+      where,
       limit: 10,
       order: [["createdAt", "DESC"]],
       include: [
@@ -35,21 +44,20 @@ router.get("/:userId", async (req, res, next) => {
 });
 
 // 특정 답변 가져오기 GET / :userId/:answerId
-router.get("/:userId/:answerId", async (req, res, next) => {
+router.get("/:answerId", async (req, res, next) => {
   try {
-    const userId = parseInt(req.params.userId);
     const answerId = parseInt(req.params.answerId);
     const askId = parseInt(req.query.askId);
 
     const existAnswer = await Answer.findOne({
-      where: { id: answerId, linked_ask_id: askId, target_user_id: userId },
+      where: { id: answerId, linked_ask_id: askId },
     });
 
     if (!existAnswer) {
       return res.status(403).send("이미 삭제된 답변입니다.");
     }
     const answer = await findOne({
-      where: { id: answerId, linked_ask_id: askId, target_user_id: userId },
+      where: { id: answerId, linked_ask_id: askId },
       include: [
         {
           model: Ask,

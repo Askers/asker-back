@@ -1,4 +1,5 @@
 const express = require("express");
+const { Op } = require("sequelize");
 const { User, Ask } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 const router = express.Router();
@@ -34,16 +35,25 @@ router.post("/:userId", async (req, res, next) => {
 // 1/admin 부분에 들어가는 데이터 전송
 // 프론트에서 보낸 라우터의 유저 주소와 req.user의 값이 같을 때 반환
 router.get("/:userId", async (req, res, next) => {
+  console.log(req.params.userId);
+  console.log(req.user.id);
   if (req.user === req.params.userId) {
     return res.status(503).send("잘못된 접근입니다.");
   }
   try {
     // 해당 라우터 유저 정보(username과 일치, is_answered: true 제외)
-    const asks = await Ask.findAll({
-      where: {
-        target_user_id: req.user.id,
+    const where = { target_user_id: req.params.userId, is_answered: false };
+
+    if (parseInt(req.query.lastId, 10)) {
+      // 초기 로딩이 아닐때
+      // ask가 10보다 작을 때
+      where.id = {
+        [Op.lt]: parseInt(req.query.lastId, 10),
         is_answered: false,
-      },
+      };
+    }
+    const asks = await Ask.findAll({
+      where,
       limit: 10,
       order: [["createdAt", "DESC"]],
     });
