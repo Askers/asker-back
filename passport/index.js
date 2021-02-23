@@ -1,6 +1,7 @@
 const passport = require("passport");
 const local = require("./local");
 const twitter = require("./twitter");
+const google = require("./google");
 const { User } = require("../models");
 
 module.exports = () => {
@@ -20,5 +21,6 @@ module.exports = () => {
   });
 
   local();
+  google();
   twitter();
 };
