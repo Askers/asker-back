@@ -13,7 +13,6 @@ module.exports = () => {
         callbackURL: "http://127.0.0.1:3000/auth/twitter/callback",
       },
       async (token, tokenSecret, profile, cb) => {
-        console.log(token, tokenSecret, profile);
         try {
           const exUser = await User.findOne({
             where: { email: profile.emails[0].value },

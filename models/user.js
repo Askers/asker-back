@@ -6,7 +6,14 @@ module.exports = class User extends Model {
     // 상속받은 것에서 부모 호출 시 super
     return super.init(
       {
-        // id 기본적으로 할당된다
+        googleId: {
+          type: DataTypes.STRING(50),
+          unique: true,
+        },
+        twitterId: {
+          type: DataTypes.STRING(50),
+          unique: true,
+        },
         email: {
           type: DataTypes.STRING(50),
           allowNull: false,
@@ -19,6 +26,12 @@ module.exports = class User extends Model {
         password: {
           type: DataTypes.STRING(100),
           allowNull: false,
+        },
+        profileImgUrl: {
+          type: DataTypes.STRING(100),
+        },
+        provider: {
+          type: DataTypes.STRING(10),
         },
       },
       {

@@ -1,5 +1,5 @@
 const passport = require("passport");
-const { OAuth2Strategy: GoogleStrategy } = require("passport-google-oauth");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const dotenv = require("dotenv");
 const { User } = require("../models");
 dotenv.config();
@@ -10,16 +10,21 @@ module.exports = () => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/google/callback",
+        callbackURL: "/auth/google/callback",
       },
-      function (accessToken, refreshToken, profile, done) {
-        //   User.findOrCreate({ googleId: profile.id }, function (err, user) {
-        //     return done(err, user);
-        //   });
-
-        // Register User
-        console.log(profile);
-        cb(null, profile);
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          const exUser = await User.findOne({
+            where: { googleId: profile._json.sub },
+          });
+          if (exUser) {
+            return done(null, exUser);
+          }
+          return done(null, profile._json);
+        } catch (error) {
+          console.error(error);
+          return done(error);
+        }
       }
     )
   );

@@ -42,7 +42,7 @@ router.get("/", async (req, res, next) => {
 
 // GET /auth/:userId
 // 해당 라우터의 유저 정보 리턴
-router.get("/:userId", async (req, res, next) => {
+router.get("users/:userId", async (req, res, next) => {
   try {
     const userData = await User.findOne({
       where: { id: req.params.userId },
@@ -50,7 +50,7 @@ router.get("/:userId", async (req, res, next) => {
     });
 
     if (!userData) {
-      return res.status(404).send("존재하지 않는 유저입니다.");
+      return res.status(404).send("존재하지 않는!!! 유저입니다.");
     }
     res.status(201).json(userData);
   } catch (err) {
@@ -117,39 +117,30 @@ router.post("/signup", isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-// /auth/twitter
+// Twitter OAuth
 router.get(
   "/twitter",
   passport.authenticate("twitter", { scope: ["profile"] })
 );
 
-// /auth/twitter/callback
-// 검증을 마치고 전달해주는 주소
+// Twitter Callback
 router.get(
   "/twitter/callback",
-  passport.authenticate("twitter", { failureRedirect: "/auth/login" }),
+  passport.authenticate("twitter", { failureRedirect: "/login" }),
   function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect(`/${req.user.user_id}`);
+    res.redirect("http://localhost:3000");
   }
 );
 
 // Google OAuth
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
 
 // Google Callback
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/auth/login" }),
-  async (req, res, next) => {
-    try {
-    } catch (err) {
-      console.error(err);
-      next(err);
-    }
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  function (req, res) {
+    res.redirect("http://localhost:3000");
   }
 );
 module.exports = router;
