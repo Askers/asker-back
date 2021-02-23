@@ -134,4 +134,22 @@ router.get(
   }
 );
 
+// Google OAuth
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+// Google Callback
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/auth/login" }),
+  async (req, res, next) => {
+    try {
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
+  }
+);
 module.exports = router;
