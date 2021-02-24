@@ -53,7 +53,7 @@ USER INFO CHECKING
 
 // GET /auth/:userId
 // 해당 라우터의 유저 정보 리턴
-router.get("users/:userId", async (req, res, next) => {
+router.get("/users/:userId", async (req, res, next) => {
   try {
     const userData = await User.findOne({
       where: { id: req.params.userId },
