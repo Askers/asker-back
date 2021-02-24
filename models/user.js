@@ -6,11 +6,7 @@ module.exports = class User extends Model {
     // 상속받은 것에서 부모 호출 시 super
     return super.init(
       {
-        googleId: {
-          type: DataTypes.STRING(50),
-          unique: true,
-        },
-        twitterId: {
+        socialKey: {
           type: DataTypes.STRING(50),
           unique: true,
         },

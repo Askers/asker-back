@@ -15,12 +15,12 @@ module.exports = () => {
       async (accessToken, refreshToken, profile, done) => {
         try {
           const exUser = await User.findOne({
-            where: { googleId: profile.id },
+            where: { socialKey: profile.id },
           });
           if (!exUser) {
             // Create New User
             const user = await User.create({
-              googleId: profile.id,
+              socialKey: profile.id,
               username: profile.name.givenName,
               profileImgUrl: profile._json.picture,
               provider: "google",

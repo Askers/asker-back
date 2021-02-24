@@ -15,12 +15,12 @@ module.exports = () => {
       async (token, tokenSecret, profile, done) => {
         try {
           const exUser = await User.findOne({
-            where: { twitterId: profile.id },
+            where: { socialKey: profile.id },
           });
           // Create New User
           if (!exUser) {
             const user = await User.create({
-              twitterId: profile.id,
+              socialKey: profile.id,
               username: profile.username,
               profileImgUrl: profile.profile_image_url,
               provider: "twitter",
