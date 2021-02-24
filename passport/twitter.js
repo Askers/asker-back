@@ -1,5 +1,5 @@
 const passport = require("passport");
-const { Strategy: TwitterStrategy } = require("passport-twitter");
+const TwitterStrategy = require("passport-twitter").Strategy;
 const dotenv = require("dotenv");
 const { User } = require("../models");
 dotenv.config();
@@ -9,27 +9,28 @@ module.exports = () => {
     new TwitterStrategy(
       {
         consumerKey: process.env.TWITTER_CONSUMER_KEY,
-        consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-        callbackURL: "http://127.0.0.1:3000/auth/twitter/callback",
+        consumerSecret: process.env.TWITTER_CONSUMER_KEY_SECRET,
+        callbackURL: "/auth/twitter/callback",
       },
-      async (token, tokenSecret, profile, cb) => {
+      async (token, tokenSecret, profile, done) => {
         try {
           const exUser = await User.findOne({
-            where: { email: profile.emails[0].value },
+            where: { twitterId: profile.id },
           });
-          if (exUser) {
-            cb(null, exUser);
-          } else {
-            const newUser = await User.create({
-              email: profile.emails[0].value,
-              username: profile.displayName,
+          // Create New User
+          if (!exUser) {
+            const user = await User.create({
+              twitterId: profile.id,
+              username: profile.username,
+              profileImgUrl: profile.profile_image_url,
               provider: "twitter",
             });
-            cb(null, newUser);
+            return done(null, user);
           }
-        } catch (error) {
-          console.error(error);
-          return done(error);
+          done(null, exUser);
+        } catch (err) {
+          console.error(err);
+          return done(err, null);
         }
       }
     )

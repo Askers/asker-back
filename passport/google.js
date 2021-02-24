@@ -15,15 +15,23 @@ module.exports = () => {
       async (accessToken, refreshToken, profile, done) => {
         try {
           const exUser = await User.findOne({
-            where: { googleId: profile._json.sub },
+            where: { googleId: profile.id },
           });
-          if (exUser) {
-            return done(null, exUser);
+          if (!exUser) {
+            // Create New User
+            const user = await User.create({
+              googleId: profile.id,
+              username: profile.name.givenName,
+              profileImgUrl: profile._json.picture,
+              provider: "google",
+            });
+            return done(null, user);
           }
-          return done(null, profile._json);
-        } catch (error) {
-          console.error(error);
-          return done(error);
+
+          done(null, exUser);
+        } catch (err) {
+          console.error(err);
+          return done(err, null);
         }
       }
     )

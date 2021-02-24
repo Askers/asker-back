@@ -20,6 +20,11 @@ const router = express.Router();
 
 */
 
+/*
+-----------------------
+LOCAL OAUTH
+-----------------------
+*/
 // GET /auth
 // 로그인한 유저의 정보 리턴
 router.get("/", async (req, res, next) => {
@@ -40,6 +45,12 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+/*
+-----------------------
+USER INFO CHECKING
+-----------------------
+*/
+
 // GET /auth/:userId
 // 해당 라우터의 유저 정보 리턴
 router.get("users/:userId", async (req, res, next) => {
@@ -58,6 +69,12 @@ router.get("users/:userId", async (req, res, next) => {
     next(err);
   }
 });
+
+/*
+-----------------------
+LOG IN
+-----------------------
+*/
 
 // POST /auth/login
 router.post("/login", isNotLoggedIn, (req, res, next) => {
@@ -83,12 +100,23 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
   })(req, res, next);
 });
 
+/*
+-----------------------
+LOG OUT
+-----------------------
+*/
 // POST /logout
 router.post("/logout", isLoggedIn, async (req, res, next) => {
   req.logout();
   req.session.destroy();
   res.send("ok");
 });
+
+/*
+-----------------------
+SIGN UP
+-----------------------
+*/
 
 // POST /signup
 router.post("/signup", isNotLoggedIn, async (req, res, next) => {
@@ -117,6 +145,12 @@ router.post("/signup", isNotLoggedIn, async (req, res, next) => {
   }
 });
 
+/*
+-----------------------
+TWITTER OAUTH
+-----------------------
+*/
+
 // Twitter OAuth
 router.get(
   "/twitter",
@@ -128,9 +162,15 @@ router.get(
   "/twitter/callback",
   passport.authenticate("twitter", { failureRedirect: "/login" }),
   function (req, res) {
-    res.redirect("http://localhost:3000");
+    res.redirect("http://localhost:3000/login");
   }
 );
+
+/*
+-----------------------
+GOOGLE OAUTH
+-----------------------
+*/
 
 // Google OAuth
 router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
@@ -140,7 +180,7 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
-    res.redirect("http://localhost:3000");
+    res.redirect("http://localhost:3000/login");
   }
 );
 module.exports = router;

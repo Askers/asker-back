@@ -16,7 +16,6 @@ module.exports = class User extends Model {
         },
         email: {
           type: DataTypes.STRING(50),
-          allowNull: false,
           unique: true,
         },
         username: {
@@ -25,7 +24,6 @@ module.exports = class User extends Model {
         },
         password: {
           type: DataTypes.STRING(100),
-          allowNull: false,
         },
         profileImgUrl: {
           type: DataTypes.STRING(100),
