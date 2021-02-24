@@ -29,16 +29,16 @@ LOCAL OAUTH
 // 로그인한 유저의 정보 리턴
 router.get("/", async (req, res, next) => {
   try {
+    console.log("로그인 여부 체크");
     if (req.user) {
       const myInfoWithoutPassword = await User.findOne({
         where: { id: req.user.id },
         // password 제외
         attributes: { exclude: ["password"] },
       });
-      res.status(201).json(myInfoWithoutPassword);
-    } else {
-      res.status(200).json(null);
+      return res.status(201).json(myInfoWithoutPassword);
     }
+    res.status(200).json(null);
   } catch (err) {
     console.error(err);
     next(err);

@@ -25,9 +25,10 @@ module.exports = () => {
               profileImgUrl: profile._json.picture,
               provider: "google",
             });
+            console.log("구글 패스포트: 기존 유저 없는 경우");
             return done(null, user);
           }
-
+          console.log("구글 패스포트: 기존 유저 있는 경우");
           done(null, exUser);
         } catch (err) {
           console.error(err);
