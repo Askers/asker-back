@@ -20,7 +20,7 @@ const app = express();
 // DB 연결
 // alter: true
 db.sequelize
-  .sync({ alter: true })
+  .sync()
   .then(() => {
     console.log("DB SUCCESS");
   })
@@ -47,7 +47,7 @@ app.use(
   session({
     name: "Asker",
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 },
+    cookie: { maxAge: 60000 * 60 * 24 },
     resave: false,
     secret: process.env.COOKIE_SECRET,
   })

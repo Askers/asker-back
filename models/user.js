@@ -12,7 +12,6 @@ module.exports = class User extends Model {
         },
         email: {
           type: DataTypes.STRING(50),
-          unique: true,
         },
         username: {
           type: DataTypes.STRING(30),
