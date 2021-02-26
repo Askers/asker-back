@@ -22,7 +22,6 @@ module.exports = () => {
             const user = await User.create({
               socialKey: profile.id,
               username: profile.username,
-              profileImgUrl: profile.profile_image_url,
               provider: "twitter",
             });
             return done(null, user);

@@ -20,9 +20,6 @@ module.exports = class User extends Model {
         password: {
           type: DataTypes.STRING(100),
         },
-        profileImgUrl: {
-          type: DataTypes.STRING(100),
-        },
         provider: {
           type: DataTypes.STRING(10),
         },
